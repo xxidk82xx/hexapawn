@@ -24,6 +24,7 @@
 				this.pawnSel = false;
 				this.clickPos = [0,0];
 				this.turn = true;
+				this.unmovable = 0;
 				this.board = 
 				[
 					[1,0,2],
@@ -93,11 +94,15 @@
 				{
 					for(this.x = 0; this.x < 3; this.x++)
 					{
-						if(this.board[this.y][this.x] = 2 && this.board[this.y + 1][this.x] == 1 && this.board[this.y + 1][this.x - 1] != 1 && this.board[this.y + 1][this.x + 1] != 1)
+						if((this.board[this.y][this.x] == 2) && (this.y == 3 ? true :false/*(this.board[this.y + 1][this.x] == 1)*/) &&((this.x == 0 && this.y ==3)?true : (this.board[this.y + 1][this.x - 1] != 1 ))&& ((this.y == 3 && this.x == 3)?true : (this.board[this.y + 1][this.x + 1] != 1)))
 						{
-							this.gameWin("black");
+							this.unmovable++;
 						}
 					}
+				}
+				if(unmoveable == 3)
+				{
+					this.gameWin("black");
 				}
 				this.turn = false;
 			}
