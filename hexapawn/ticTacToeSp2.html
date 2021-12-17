@@ -20,10 +20,11 @@
 				this.height = height;
 				this.width = width;
 				this.ctx = ctx;
-				this.sel = [0,0,0]
+				this.sel = [0,0,1]
 				this.isWhite = -1;
 				this.pawnSel = false;
 				this.clickPos = [0,0];
+				this.turn = 2;
 				this.board = 
 				[
 					[1,0,2],
@@ -39,57 +40,80 @@
 		}
 		click(clickX, clickY)
 		{
-			this.clickPos[0] = (this.clickPos[0])
-			this.clickPos[1] = (this.clickPos[1])
-			/*if((this.board[this.clickPos[0]][this.clickPos[1]] != 0 && this.board[this.clickPos[0]][this.clickPos[1]] != this.sel[2])&& this.pawnSel&& Math.abs([this.clickPos[0]] - this.sel[0]) == 1 && [this.clickPos[1]] - this.sel[1] > 0 && this.sel[2] == 1)
+			this.clickPos[0] = (clickX <= this.width / 3 ? 0 : clickX <= this.width / 3 * 2 ? 1 : 2)
+			this.clickPos[1] = (clickY <= this.height / 3 ? 0 : clickY <= this.height / 3 * 2 ? 1 : 2)
+			//kill an enemy piece if you are black
+			if(this.board[this.clickPos[0]][this.clickPos[1]] != this.sel[2])
 			{
-				this.board[this.clickPos[0]][this.clickPos[1]] = this.sel[2];
-				this.board[this.sel[0]][this.sel[1]] = 0;
-				this.sel[2] = 0;
-				this.pawnSel = false 
-			}*/
-			if ((this.board[this.clickPos[0]][this.clickPos[1]] != 0 && this.board[this.clickPos[0]][this.clickPos[1]] != this.sel[2]) && this.pawnSel && Math.abs([this.clickPos[0]] - this.sel[0]) == 1 && [this.clickPos[1]] - this.sel[1] < 0 && this.sel[2] == 2)
-			{
-				this.board[this.clickPos[0]][this.clickPos[1]] = 2;
-				this.board[this.sel[0]][this.sel[1]] = 0;
-				this.sel[2] = 0;
-				this.pawnSel = false
+				this.ctx.font = "50px Arial";
+				this.ctx.fillStyle = "white"
+				this.ctx.fillText("not your turn", this.width / 2 - 50, this.height / 2);
 			}
-			else if(this.board[this.clickPos[0]][this.clickPos[1]] == 1)
+			else
 			{
-				this.pawnSel = true;
-				
-				this.sel[0] = [this.clickPos[0]];
-				this.sel[1] = [this.clickPos[1]];
-				this.sel[2] = this.board[this.clickPos[0]][this.clickPos[1]]
-				this.isWhite = this.sel[2] == 2? -1:1;
-			}
-			/*else if(this.pawnSel && Math.abs([this.clickPos[0]] - this.sel[0]) == 0 && [this.clickPos[1]] - this.sel[1] > 0 && this.sel[2] == 1)
-			{
-				this.board[this.clickPos[0]][this.clickPos[1]] = 1;
-				this.board [this.sel[0]][this.sel[1]] = 0;
-				this.sel[2] = 0;
-				this.pawnSel = false 
-			}*/
-			else if (this.pawnSel && Math.abs([this.clickPos[0]] - this.sel[0]) == 0 && [this.clickPos[1]] - this.sel[1] < 0 && this.sel[2]) 
-			{
-				this.board[this.clickPos[0]][this.clickPos[1]] = 2;
-				this.board[this.sel[0]][this.sel[1]] = 0;
-				this.sel[2] = 0;
-				if(this.map[this.this.clickPos[0]][this.this.clickPos[1]] == 2)
+				if((this.board[this.clickPos[0]][this.clickPos[1]] != 0 && this.board[this.clickPos[0]][this.clickPos[1]] != this.sel[2])&& this.pawnSel&& Math.abs([this.clickPos[0]] - this.sel[0]) == 1 && [this.clickPos[1]] - this.sel[1] == 1 && this.sel[2] == 1)
 				{
-					this.gameWin("white");
+					this.board[this.clickPos[0]][this.clickPos[1]] = this.sel[2];
+					this.board[this.sel[0]][this.sel[1]] = 0;
+					this.sel[2] = 0;
+					this.pawnSel = false 
+					this.drawBoard();
 				}
-				this.pawnSel = false;
+				//kill enemy piece if you are white
+				if ((this.board[this.clickPos[0]][this.clickPos[1]] != 0 && this.board[this.clickPos[0]][this.clickPos[1]] != this.sel[2]) && this.pawnSel && Math.abs([this.clickPos[0]] - this.sel[0]) == 1 && [this.clickPos[1]] - this.sel[1] == -1 && this.sel[2] == 2)
+				{
+					this.board[this.clickPos[0]][this.clickPos[1]] = 2;
+					this.board[this.sel[0]][this.sel[1]] = 0;
+					this.sel[2] = 0;
+					this.pawnSel = false
+					this.drawBoard();
+					if (this.clickPos[1] == 0) 
+					{
+						this.gameWin("white");
+					}
+				}
+				//selects a pawn
+				else if(this.board[this.clickPos[0]][this.clickPos[1]])
+				{
+					this.pawnSel = true;
+
+					this.sel[0] = this.clickPos[0];
+					this.sel[1] = this.clickPos[1];
+					this.sel[2] = this.board[this.clickPos[0]][this.clickPos[1]]
+					this.isWhite = this.sel[2] == 2? -1:1;
+					this.drawBoard();
+				}
+				//move black piece
+				else if(this.pawnSel && Math.abs([this.clickPos[0]] - this.sel[0]) == 0 && [this.clickPos[1]] - this.sel[1] == 1 && this.sel[2] == 1)
+				{
+					this.board[this.clickPos[0]][this.clickPos[1]] = 1;
+					this.board [this.sel[0]][this.sel[1]] = 0;
+					this.sel[2] = 0;
+					this.pawnSel = false 
+					this.drawBoard();
+				}
+				//move white piece
+				else if (this.pawnSel && Math.abs([this.clickPos[0]] - this.sel[0]) == 0 && [this.clickPos[1]] - this.sel[1] == -1 && this.sel[2]) 
+				{
+					this.board[this.clickPos[0]][this.clickPos[1]] = 2;
+					this.board[this.sel[0]][this.sel[1]] = 0;
+					this.sel[2] = 0;
+
+					this.pawnSel = false;
+					this.drawBoard();
+					if (this.clickPos[1] == 0) 
+					{
+						this.gameWin("white");
+					}
+				}
 			}
-			this.drawBoard();
 			
 		}
 		gameWin(winner)
 		{
-			ctx.font = "30px Arial";
-			ctx.fillStyle = "white"
-			ctx.fillText(winner, this.width/2, this.height/2);
+			this.ctx.font = "50px Arial";
+			this.ctx.fillStyle = "white"
+			this.ctx.fillText(winner + " wins", this.width/2 - 50, this.height/2);
 		}
 		drawBoard() {
 			
